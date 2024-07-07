@@ -33,4 +33,4 @@ spec:
               memory: "{{ .Values.resources.limits.memory }}"
               cpu: "{{ .Values.resources.limits.cpu }}"
       imagePullSecrets:
-        - name: {{ .Values.imagePullSecrets[0].name }}
+        - name: acr-secret
