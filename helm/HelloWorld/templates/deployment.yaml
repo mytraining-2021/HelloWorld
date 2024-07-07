@@ -1,0 +1,38 @@
+# templates/deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helloworld.fullname" . }}
+  labels:
+    {{- include "helloworld.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "helloworld.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "helloworld.name" . }}
+        {{- include "helloworld.selectorLabels" . | nindent 4 }}
+    spec:
+      serviceAccountName: {{ include "helloworld.serviceAccountName" . }}
+      containers:
+        - name: {{ include "helloworld.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+              value: "{{ .Values.env.APPLICATIONINSIGHTS_CONNECTION_STRING }}"
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets[0].name }}
